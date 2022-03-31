@@ -35,7 +35,7 @@ public class UserController {
 	UserRepository repository;
 	
 	@PostMapping("/signin")
-	public ResponseEntity singnin(@RequestBody AccountCredentialsVO data) {
+	public ResponseEntity signin(@RequestBody AccountCredentialsVO data) {
 		try {
 			var username = data.getUsername();
 			var password = data.getPassword();
@@ -54,7 +54,7 @@ public class UserController {
 			model.put("token", token);
 			return ok(model);
 		} catch (AuthenticationException e) {
-			throw new BadCredentialsException("Usario e/ou senha invalida ");
+			throw new BadCredentialsException("Usuario e/ou senha invalida ");
 		}
 	}
 	
