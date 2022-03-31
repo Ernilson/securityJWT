@@ -10,9 +10,9 @@ public class JwtSecurityApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(JwtSecurityApplication.class, args);
 		
-		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(16);
-		String result = bCryptPasswordEncoder.encode("admin");
-		System.out.println("teste123" + result);
+//		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(16);
+//		String result = bCryptPasswordEncoder.encode("admin");
+//		System.out.println("teste123" + result);
 	}
 
 }
