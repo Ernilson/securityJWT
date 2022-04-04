@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import br.com.jwt_security.Exceptions.InvalidJwtAuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -55,8 +56,7 @@ public class JwtTokenProvider {
 		
 	}
 	
-	public Authentication getAuthentication(String token) {
-		
+	public Authentication getAuthentication(String token) {		
 		UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
@@ -80,8 +80,8 @@ public class JwtTokenProvider {
 				return false;
 			}
 			return true;
-		}catch(Exception e){
-			throw new InvalidJwtAuthenticationException("Expied or invalid token");
+		} catch (JwtException | IllegalArgumentException e) {
+			throw new InvalidJwtAuthenticationException("Expired or invalid JWT token");
 		}
 	}
 	

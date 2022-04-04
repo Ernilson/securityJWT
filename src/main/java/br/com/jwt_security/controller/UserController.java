@@ -21,6 +21,7 @@ import br.com.jwt_security.repository.UserRepository;
 import br.com.jwt_security.security.AccountCredentialsVO;
 import br.com.jwt_security.security.JwtTokenProvider;
 
+
 @RestController
 @RequestMapping("/auth")
 public class UserController {
@@ -34,8 +35,9 @@ public class UserController {
 	@Autowired
 	UserRepository repository;
 	
-	@PostMapping("/signin")
-	public ResponseEntity signin(@RequestBody AccountCredentialsVO data) {
+	@PostMapping(value = "/signin")
+	public ResponseEntity<?> signin(@RequestBody AccountCredentialsVO data) {
+		
 		try {
 			var username = data.getUsername();
 			var password = data.getPassword();
