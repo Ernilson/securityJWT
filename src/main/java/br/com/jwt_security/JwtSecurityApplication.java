@@ -15,9 +15,8 @@ public class JwtSecurityApplication {
 		SpringApplication.run(JwtSecurityApplication.class, args);
 		
 		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(16);
-		String result = bCryptPasswordEncoder.encode("admin");
-//		System.out.println("teste123" + result);
-		//System.out.print(new BCryptPasswordEncoder().encode("santidade777"));
+		String result = bCryptPasswordEncoder.encode("admin123");
+		
 	}
 
 }

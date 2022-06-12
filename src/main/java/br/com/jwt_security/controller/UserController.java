@@ -35,20 +35,23 @@ public class UserController {
 	@Autowired
 	UserRepository repository;
 	
+	@SuppressWarnings("rawtypes")
 	@PostMapping(value = "/signin")
-	public ResponseEntity<?> signin(@RequestBody AccountCredentialsVO data) {
+	public ResponseEntity signin(@RequestBody AccountCredentialsVO data) {
 		
 		try {
 			var username = data.getUsername();
-			var password = data.getPassword();
+			var pasword = data.getPassword();
 			
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, pasword));
 			
-			var user = repository.findByUsername(username);
+			var user = repository.findByUsername(username);			
 			var token = "";
 			
-			if (user != null ) {
-				throw new UsernameNotFoundException("Username" + username +"not found!");
+			if (user != null) {
+				token = jwtTokenProvider.createToken(username, user.getRoles());
+			} else {
+				throw new UsernameNotFoundException("Username " + username + " not found!");
 			}
 			
 			Map<Object, Object> model = new HashMap<>();
@@ -56,7 +59,7 @@ public class UserController {
 			model.put("token", token);
 			return ok(model);
 		} catch (AuthenticationException e) {
-			throw new BadCredentialsException("Usuario e/ou senha invalida ");
+			throw new BadCredentialsException("nome e/ou senha do usuario esta invalida!");
 		}
 	}
 	

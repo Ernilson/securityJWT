@@ -54,8 +54,7 @@ public class User implements UserDetails, Serializable {
 	private List<Permission> permissions;
 	
 	public List<String> getRoles(){
-		List<String> roles = new ArrayList<>();
-	
+		List<String> roles = new ArrayList<>();	
 		for(Permission permission : this.permissions) {
 			roles.add(permission.getDescription()); 
 		}

@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import br.com.jwt_security.Exceptions.InvalidJwtAuthenticationException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -24,20 +25,19 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Service
 public class JwtTokenProvider {
-
-	@Value("${security.jwt.token.secret-key:secret}")
-	private String secretkey = "secret";
 	
-	@Value("${security.jwt.token.expire-leght:3600000}")
+	@Value("${security.jwt.token.secret-key:secret}")
+	private String secretKey = "secret";
+	
+	@Value("${security.jwt.token.expire-length:3600000}")
 	private long validityInMilliseconds = 3600000; //1h
 	
 	@Autowired
 	private UserDetailsService userDetailsService;
 	
-	
 	@PostConstruct
-	public void init() {
-		secretkey = Base64.getEncoder().encodeToString(secretkey.getBytes());
+	protected void init() {
+		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
 	}
 	
 	public String createToken(String username, List<String> roles) {
@@ -49,34 +49,33 @@ public class JwtTokenProvider {
 		
 		return Jwts.builder()
 				.setClaims(claims)
-			.setIssuedAt(now)
-			.setExpiration(validity)
-			.signWith(SignatureAlgorithm.HS256, secretkey)
-			.compact();
-		
+				.setIssuedAt(now)
+				.setExpiration(validity)
+				.signWith(SignatureAlgorithm.HS256, secretKey)
+				.compact();
 	}
 	
-	public Authentication getAuthentication(String token) {		
+	public Authentication getAuthentication(String token) {
 		UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
-	
+
 	private String getUsername(String token) {
-		return Jwts.parser().setSigningKey(secretkey).parseClaimsJws(token).getBody().getSubject();
+		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
 	}
 	
 	public String resolveToken(HttpServletRequest req) {
 		String bearerToken = req.getHeader("Authorization");
-		if(bearerToken != null && bearerToken.startsWith("Bearer")) {
-		return bearerToken.substring(7, bearerToken.length());		
-	}
+		if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+			return bearerToken.substring(7, bearerToken.length());
+		}		
 		return null;
 	}
 	
 	public boolean validateToken(String token) {
 		try {
-			Jws<Claims> claims = Jwts.parser().setSigningKey(secretkey).parseClaimsJws(token);
-			if(claims.getBody().getExpiration().before(new Date())) {
+			Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+			if (claims.getBody().getExpiration().before(new Date())) {
 				return false;
 			}
 			return true;
@@ -84,5 +83,5 @@ public class JwtTokenProvider {
 			throw new InvalidJwtAuthenticationException("Expired or invalid JWT token");
 		}
 	}
-	
+
 }
